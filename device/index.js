@@ -154,7 +154,7 @@ function prepareWebSocketUrl(options, awsAccessId, awsSecretKey, awsSTSToken) {
    if (!isUndefined(options.port) && options.port !== 443) {
       hostName = options.host + ':' + options.port;
    }
-   return signUrl('GET', 'wss://', hostName, path, queryParams,
+   return signUrl('GET', options.protocol + '://', hostName, path, queryParams,
       awsAccessId, awsSecretKey, options.region, awsServiceName, '', today, now, options.debug, awsSTSToken);
 }
 //
@@ -442,6 +442,7 @@ function DeviceClient(options) {
    var protocols = {};
    protocols.mqtts = require('./lib/tls');
    protocols.wss = require('./lib/ws');
+   protocols.ws = require('./lib/ws');
 
    function _addToSubscriptionCache(topic, options) {
       var matches = activeSubscriptions.filter(function(element) {
@@ -500,10 +501,10 @@ function DeviceClient(options) {
    }
 
    function _wrapper(client) {
-      if (options.protocol === 'wss') {
+      if (options.protocol === 'wss' || options.protocol === 'ws') {
          var url;
          //
-         // If the access id and secret key are available, prepare the URL. 
+         // If the access id and secret key are available, prepare the URL.
          // Otherwise, set the url to an invalid value.
          //
          if (awsAccessId === '' || awsSecretKey === '') {
