@@ -653,11 +653,7 @@ function DeviceClient(options) {
       }
       that.emit('connect');
    });
-   device.on('close', function(err) {
-      if (err) {
-         that.emit('error', err);
-      }
-
+   device.on('close', function() {
       if ((!isUndefined(options)) && (options.debug === true)) {
          console.log('connection lost - will attempt reconnection in ' +
             device.options.reconnectPeriod / 1000 + ' seconds...');
